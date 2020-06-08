@@ -42,9 +42,10 @@ Resources:
                   responseData['Response'] = json.dumps(response)
                   cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData)
               except Exception as err:
-                  responseData['Response'] = json.dumps(event)
-                  cfnresponse.send(event, context, cfnresponse.FAILED, responseData)
                   print("Error: {}".format(err))
+                  responseData['Response'] = json.dumps(err)
+                  cfnresponse.send(event, context, cfnresponse.FAILED, responseData)
+                  
 
       Runtime: python3.7
       Handler: index.lambda_handler
