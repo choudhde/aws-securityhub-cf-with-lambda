@@ -43,7 +43,7 @@ Resources:
                   cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData)
               except Exception as err:
                   print("Error: {}".format(err))
-                  responseData['Response'] = json.dumps(err)
+                  responseData['Response'] = json.dumps("Check logs for further details")
                   cfnresponse.send(event, context, cfnresponse.FAILED, responseData)
                   
 
