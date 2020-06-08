@@ -38,9 +38,7 @@ Resources:
           def lambda_handler(event, context):
               try:
                   sh_client = boto3.client('securityhub', region_name=AWS_REGION)
-                  response = sh_client.enable_security_hub(Tags={
-                      TAG_KEY: TAG_VALUE
-                  })
+                  response = sh_client.enable_security_hub()
                   responseData['Response'] = json.dumps(response)
                   cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData)
               except Exception as err:
