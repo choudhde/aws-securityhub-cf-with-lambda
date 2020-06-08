@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Enable SecurityHub with CIS benchmark.
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [lambda.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: /
+      Policies:
+        - PolicyName: enableSecurityHub
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: ['securityhub:*', 'logs:*']
+                Resource: '*'
+  EnableCISFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Environment:
+        Variables:
+          awsRegion: !Sub ${AWS::Region}
+      Code:
+        ZipFile: |
+          import boto3
+          import os 
+          import json
+          import cfnresponse
+
+          AWS_REGION = str(os.getenv('awsRegion'))
+          responseData = {}
+          def lambda_handler(event, context):
+              try:
+                  sh_client = boto3.client('securityhub', region_name=AWS_REGION)
+                  response = sh_client.enable_security_hub(Tags={
+                      TAG_KEY: TAG_VALUE
+                  })
+                  responseData['Response'] = json.dumps(response)
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData)
+              except Exception as err:
+                  responseData['Response'] = json.dumps(event)
+                  cfnresponse.send(event, context, cfnresponse.FAILED, responseData)
+                  print("Error: {}".format(err))
+
+      Runtime: python3.7
+      Handler: index.lambda_handler
+      Timeout: 20
+      Role: !GetAtt LambdaExecutionRole.Arn
+  
+  FunctionInvoke:
+    Type: Custom::EnableSecurityHubCIS
+    Version: "1.0"
+    Properties:
+      ServiceToken: !GetAtt EnableCISFunction.Arn
+
+Outputs:
+  SecurityHubArn:
+    Value: !Ref EnableCISFunction
