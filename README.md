@@ -1,4 +1,4 @@
-## aws-securityhub-cf-with-lambda
+## AWS SecurityHub - Cloudformation template with inline Lambda
 
 ![Overview](./images/securityhub.png)
 
