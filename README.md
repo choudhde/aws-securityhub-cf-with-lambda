@@ -1,5 +1,7 @@
 ## aws-securityhub-cf-with-lambda
 
+![Overview](./images/securityhub.png)
+
 #### Description:  
 <p> This Cloudformation template enables Security Hub for your account in the Region the CF template is deployed.
 The AWS::SecurityHub::Hub resource in Cloudformation doesn't automatically enable "CIS AWS Foundations" & "AWS Foundational Security Best Practices".
